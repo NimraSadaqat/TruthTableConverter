@@ -1,0 +1,30 @@
+{% extends "BE_converter/base.html" %}
+
+{% load static %}
+
+{% block scripts %}
+<link rel="stylesheet" href="{% static 'BE_converter/style.css' %}">
+<script src="{% static 'BE_converter/main.js' %}"></script>
+{% endblock scripts %}
+
+{% block content %}
+
+<p>Testing</p>
+<form onsubmit="Create(event)">
+  {% csrf_token %}
+<div class="input-group mb-3">
+  <span class="input-group-text">Number of Input</span>
+  <input type="number" id="input" class="form-control">
+</div>
+<button type="submit" class="btn btn-primary">Create Table</button>
+</form>
+<form>
+  {% csrf_token %}
+  <div id="truth_table">
+    <table id="tb">
+
+    </table>
+  </div>
+</form>
+
+{% endblock content %}

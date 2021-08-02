@@ -5,4 +5,4 @@ from django.shortcuts import render
 #     model = Test
 #     template_name = 'mcqs/main.html'
 def index(request):
-    return render(request, 'main.html')
+    return render(request, 'BE_converter/main.html')
