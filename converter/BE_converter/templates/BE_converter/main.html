@@ -9,7 +9,7 @@
 
 {% block content %}
 
-<p>Testing</p>
+<!-- <p>Testing</p> -->
 <form onsubmit="Create(event)">
   {% csrf_token %}
 <div class="input-group mb-3">
@@ -18,13 +18,13 @@
 </div>
 <button type="submit" class="btn btn-primary">Create Table</button>
 </form>
-<form>
+<form id="output-form" onsubmit="sendData(event)">
   {% csrf_token %}
   <div id="truth_table">
-    <table id="tb">
-
-    </table>
+      <table id="tb">
+      </table>
   </div>
-</form>
+  </form>
+  <div id="myDiagramDiv" style="width:300px; height: 300px; boder: 1px solid black;"></div>
 
 {% endblock content %}
