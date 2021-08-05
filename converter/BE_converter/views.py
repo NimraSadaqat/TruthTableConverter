@@ -24,6 +24,7 @@ def convert_truth_table(request):
         expression_pk = Boolean_Expression.objects.latest('pk') #primary key of expression just created
         circuit_image_path = draw(boolean_expression, expression_pk) #creating circuit diagram
         print(boolean_expression)
+        print(circuit_image_path)
         return JsonResponse({ 'results': result,
                                 'expression': boolean_expression,
                                 'image': circuit_image_path})

@@ -1,6 +1,7 @@
-console.log("Hello Testing");
 const url = window.location.href
 
+var boolean_expression_text
+var image_no
 function Create(event) {
     event.preventDefault();
     var no_of_inputs = document.getElementById("input").value;
@@ -11,6 +12,11 @@ function tableCreate(no_of_inputs) {
   if (typeof pre_table != 'undefined') //deleting previous table
   {
     pre_table.parentNode.removeChild(pre_table);
+  }
+  var sub = document.getElementById('sub'); //deleting previous submit data button
+  if ( sub != null )
+  {
+    sub.remove();
   }
   var be = document.getElementById('be'); //deleting previous be button
   if ( be != null )
@@ -28,12 +34,17 @@ function tableCreate(no_of_inputs) {
   {
     ex.remove();
   }
+  var c_image = document.getElementById('c_image'); //deleting previous circuit_image
+  if ( c_image != null )
+  {
+    c_image.remove();
+  }
   table = document.createElement('table')
   table.setAttribute("id", "tb");
+  table.setAttribute("class","table table-bordered")
   var input_name = 'A';
 
   var tr = document.createElement('tr');
-
   for (var a = 0; a < no_of_inputs; a++) {
     var th = document.createElement('th');
     var text = document.createTextNode(input_name);
@@ -47,7 +58,6 @@ function tableCreate(no_of_inputs) {
   var text = document.createTextNode("Output");
   th.appendChild(text);
   tr.appendChild(th);
-console.log(Math.pow(2, 1));
   var no_of_rows = Math.pow(2, no_of_inputs)
     for (var i = 0; i < no_of_rows*2; i++){
         var tr = document.createElement('tr');
@@ -77,53 +87,53 @@ console.log(Math.pow(2, 1));
       table.appendChild(tr); //appending rows
   }
 
-  document.getElementById("truth_table").appendChild(table); //creating new table
-  // create a boolean_expression button
-  var be = document.createElement("button");
-  be.setAttribute("id", "be");
-  be.setAttribute("type", "submit");
-  be.setAttribute("class", "btn btn-primary mr-3");
-  be.innerHTML = "Generate Boolean Expression";
-  document.getElementById("truth_table").appendChild(be);
-
-  // create a circuit button
-  var circuit = document.createElement("button");
-  circuit.setAttribute("id", "circuit");
-  circuit.setAttribute("type", "submit");
-  circuit.setAttribute("class", "btn btn-primary m-3");
-  circuit.innerHTML = "Generate Circuit";
-  circuit.setAttribute("onclick","init();")
-  document.getElementById("truth_table").appendChild(circuit);
+  document.getElementById("truth_table1").appendChild(table); //creating new table
+    // create a submit data button
+  var submit = document.createElement("button");
+  submit.setAttribute("id", "sub");
+  submit.setAttribute("type", "submit");
+  submit.setAttribute("class", "btn btn-primary m-1");
+  submit.innerHTML = "Submit Data";
+  document.getElementById("truth_table2").appendChild(submit);
 
 }
-
 const outputForm = document.getElementById('output-form')
 const csrf = document.getElementsByName('csrfmiddlewaretoken')
 
 function sendData(event) {
   event.preventDefault();
-  const elements = [...document.getElementsByClassName('out')]
+  document.getElementById("sub").style.display = 'none'
+  // create a boolean_expression button
+  var be = document.createElement("button");
+  be.setAttribute("id", "be");
+  be.setAttribute("type", "button");
+  be.setAttribute("class", "btn btn-primary m-1");
+  be.setAttribute("onclick","sendData_boolean();")
+  be.innerHTML = "Generate Boolean Expression";
+  document.getElementById("truth_table4").appendChild(be);
+
+  // create a circuit button
+  var circuit = document.createElement("button");
+  circuit.setAttribute("id", "circuit");
+  circuit.setAttribute("type", "button");
+  circuit.setAttribute("class", "btn btn-primary m-1");
+  circuit.innerHTML = "Generate Circuit";
+  circuit.setAttribute("onclick","sendData_circuit();")
+  document.getElementById("truth_table3").appendChild(circuit);
   const data = {}
+  const elements = [...document.getElementsByClassName('out')]
   data['csrfmiddlewaretoken'] = csrf[0].value
   elements.forEach(el=>{
         data[el.name] = el.value
       })
-  console.log(data);
 
   $.ajax({
       type: 'POST',
       url: `${url}convert/`,
       data: data,
       success: function(response){
-        const boolean_expression_text = response.results
-        const boolean_expression = response.expression
-        console.log(boolean_expression)
-        const resDiv = document.createElement("div")
-        resDiv.innerHTML += boolean_expression_text
-        const cls = ['container', 'p-3', 'text-light', 'h6', 'bg-success', 'text-center']
-        resDiv.classList.add(...cls)
-        resDiv.setAttribute("id", "expression");
-        document.getElementById("truth_table").append(resDiv)
+        boolean_expression_text = response.results
+        image_no = response.image
         },
         error: function(error){
           console.log(error)
@@ -131,94 +141,39 @@ function sendData(event) {
       })
 }
 
-function createDiagram() {
-  var $ = go.GraphObject.make;  // for conciseness in defining templates
-
-        myDiagram =
-          $(go.Diagram, "myDiagramDiv");
-
-        // the template for each item in a node's array of item data
-        var itemTempl =
-          $(go.Panel, "TableColumn",
-            $(go.Shape,
-              { row: 0, alignment: go.Spot.Bottom },
-              { fill: "slateblue", stroke: null, width: 40 },
-              new go.Binding("height", "val"),
-              new go.Binding("fill", "color")),
-            $(go.TextBlock,
-              { row: 1 },
-              new go.Binding("text")),
-            {
-              toolTip:
-                $("ToolTip",
-                  $(go.TextBlock, { margin: 4 },
-                    new go.Binding("text", "val"))
-                )
-            }
-          );
-
-        myDiagram.nodeTemplate =
-          $(go.Node, "Auto",
-            $(go.Shape,
-              { fill: "white" }),
-            $(go.Panel, "Vertical",
-              $(go.Panel, "Table",
-                { margin: 6, itemTemplate: itemTempl },
-                new go.Binding("itemArray", "items")),
-              $(go.TextBlock,
-                { font: "bold 12pt sans-serif" },
-                new go.Binding("text"))
-            )
-          );
-
-        var nodeDataArray = [
-          {
-            key: 1,
-            text: "Before",
-            items: [{ text: "first", val: 50 },
-            { text: "second", val: 70 },
-            { text: "third", val: 60 },
-            { text: "fourth", val: 80 }]
-          },
-          {
-            key: 2,
-            text: "After",
-            items: [{ text: "first", val: 50 },
-            { text: "second", val: 70 },
-            { text: "third", val: 75, color: "red" },
-            { text: "fourth", val: 80 }]
-          }
-        ];
-        var linkDataArray = [
-          { from: 1, to: 2 }
-        ];
-        myDiagram.model = $(go.GraphLinksModel,
-          {
-            copiesArrays: true,
-            copiesArrayObjects: true,
-            nodeDataArray: nodeDataArray,
-            linkDataArray: linkDataArray
-          });
-}
-function init() {
-      var $ = go.GraphObject.make;  // for conciseness in defining templates
-      var myDiagram =
-      $(go.Diagram, "myDiagramDiv",
-    { // enable Ctrl-Z to undo and Ctrl-Y to redo
-      "undoManager.isEnabled": true
-    });
-
-      var nodeDataArray = [
-      { key: "Alpha"},
-      { key: "Beta"}
-      ];
-      var linkDataArray = [
-      { to: "Beta", from: "Alpha"}
-      ];
-      myDiagram.model = new go.GraphLinksModel(nodeDataArray,linkDataArray);
-      myDiagram.nodeTemplate =
-      $(go.Node, "Auto",
-      $(go.Shape, "AndGate", shapeStyle()),
-      $(go.TextBlock, "And")
-        )
+function sendData_boolean()
+{
+  if(boolean_expression_text != null)
+  {
+    var ex = document.getElementById('expression'); //deleting previous boolean_expression
+    if ( ex != null )
+    {
+      ex.remove();
     }
+    var c_image = document.getElementById('c_image'); //deleting previous circuit_image
+    if ( c_image != null )
+    {
+      c_image.remove();
+    }
+    const resDiv = document.createElement("div")
+    resDiv.innerHTML += boolean_expression_text
+    const cls = ['container', 'p-3', 'm-3', 'text-light', 'h6', 'bg-success', 'text-center']
+    resDiv.classList.add(...cls)
+    resDiv.setAttribute("id", "expression");
+    document.getElementById("truth_table").append(resDiv)
+  }
+}
+function sendData_circuit() {
+  if (boolean_expression_text != null) {
+    var ex = document.getElementById('expression'); //deleting previous boolean_expression
+    if ( ex != null )
+    {
+      ex.remove();
+    }
+    const circuit_image = document.createElement("img")
+    circuit_image.src = `${url}media/${image_no}.png`
+    circuit_image.setAttribute("id", "c_image");
+    
+    document.getElementById("truth_table5").append(circuit_image)
+  }
+}
